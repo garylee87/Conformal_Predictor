@@ -10,10 +10,7 @@
 2. **바운딩 박스 불확실성 추정**: 객체 위치의 불확실성을 정량화하여 예측 영역 확장
 3. **확률적 보증**: 사용자가 지정한 신뢰도 수준(예: 90%)을 통계적으로 보장
 
-<div align="center">
-  <img src="https://user-images.githubusercontent.com/1381301/66535560-d3422200-eace-11e9-9123-5535d469db19.png"/>
-  <p><i>Detectron2 기반 객체 탐지의 예시 이미지</i></p>
-</div>
+<img src = "/home/RCNN/detectron2/output_conformal.jpg">
 
 ## 주요 기능
 
@@ -21,3 +18,18 @@
 - **적응형 예측 세트(APS)**: 클래스 확률 기반 예측 세트 생성
 - **바운딩 박스 확장**: 캘리브레이션 기반 불확실성 영역 계산
 - **통계적 보증**: 미지의 테스트 데이터에 대한 오류율 제한
+
+## 관련 연구 및 참고 자료
+이 프로젝트는 다음 연구를 기반으로 합니다:
+ - [Adaptive Bounding Box Uncertainties via Two-Step Conformal Prediction
+](https://eccv2024.ecva.net/media/eccv-2024/Slides/139.pdf)
+ - [A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty Quantification
+](https://arxiv.org/abs/2107.07511)
+Adaptive Conformal Predictions for Time Series
+
+## 라이선스
+이 프로젝트는 원본 Detectron2와 동일한 Apache 2.0 라이선스를 따릅니다.
+
+원본 Detectron2
+이 프로젝트는 Facebook AI Research의 Detectron2를 기반으로 합니다.
+
