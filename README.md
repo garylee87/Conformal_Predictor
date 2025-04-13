@@ -1,68 +1,23 @@
-<img src=".github/Detectron2-Logo-Horz.svg" width="300" >
+# Conformal Object Detection
 
-<a href="https://opensource.facebook.com/support-ukraine">
-  <img src="https://img.shields.io/badge/Support-Ukraine-FFD500?style=flat&labelColor=005BBB" alt="Support Ukraine - Help Provide Humanitarian Aid to Ukraine." />
-</a>
+이 프로젝트는 [Facebook AI Research의 Detectron2](https://github.com/facebookresearch/detectron2)를 기반으로 한 Conformal Prediction을 객체 탐지에 적용한 구현체입니다.
 
-Detectron2 is Facebook AI Research's next generation library
-that provides state-of-the-art detection and segmentation algorithms.
-It is the successor of
-[Detectron](https://github.com/facebookresearch/Detectron/)
-and [maskrcnn-benchmark](https://github.com/facebookresearch/maskrcnn-benchmark/).
-It supports a number of computer vision research projects and production applications in Facebook.
+## 프로젝트 소개
+
+객체 탐지 모델(특히 Faster R-CNN)에 대한 불확실성 추정을 위해 Conformal Prediction 방법론을 적용했습니다. 이를 통해:
+
+1. **적응형 예측 세트(Adaptive Prediction Set)**: 신뢰도 수준에 따라 객체의 클래스 예측을 여러 후보로 확장
+2. **바운딩 박스 불확실성 추정**: 객체 위치의 불확실성을 정량화하여 예측 영역 확장
+3. **확률적 보증**: 사용자가 지정한 신뢰도 수준(예: 90%)을 통계적으로 보장
 
 <div align="center">
   <img src="https://user-images.githubusercontent.com/1381301/66535560-d3422200-eace-11e9-9123-5535d469db19.png"/>
+  <p><i>Detectron2 기반 객체 탐지의 예시 이미지</i></p>
 </div>
-<br>
 
-## Learn More about Detectron2
+## 주요 기능
 
-Explain Like I’m 5: Detectron2            |  Using Machine Learning with Detectron2
-:-------------------------:|:-------------------------:
-[![Explain Like I’m 5: Detectron2](https://img.youtube.com/vi/1oq1Ye7dFqc/0.jpg)](https://www.youtube.com/watch?v=1oq1Ye7dFqc)  |  [![Using Machine Learning with Detectron2](https://img.youtube.com/vi/eUSgtfK4ivk/0.jpg)](https://www.youtube.com/watch?v=eUSgtfK4ivk)
-
-## What's New
-* Includes new capabilities such as panoptic segmentation, Densepose, Cascade R-CNN, rotated bounding boxes, PointRend,
-  DeepLab, ViTDet, MViTv2 etc.
-* Used as a library to support building [research projects](projects/) on top of it.
-* Models can be exported to TorchScript format or Caffe2 format for deployment.
-* It [trains much faster](https://detectron2.readthedocs.io/notes/benchmarks.html).
-
-See our [blog post](https://ai.facebook.com/blog/-detectron2-a-pytorch-based-modular-object-detection-library-/)
-to see more demos and learn about detectron2.
-
-## Installation
-
-See [installation instructions](https://detectron2.readthedocs.io/tutorials/install.html).
-
-## Getting Started
-
-See [Getting Started with Detectron2](https://detectron2.readthedocs.io/tutorials/getting_started.html),
-and the [Colab Notebook](https://colab.research.google.com/drive/16jcaJoc6bCFAQ96jDe2HwtXj7BMD_-m5)
-to learn about basic usage.
-
-Learn more at our [documentation](https://detectron2.readthedocs.org).
-And see [projects/](projects/) for some projects that are built on top of detectron2.
-
-## Model Zoo and Baselines
-
-We provide a large set of baseline results and trained models available for download in the [Detectron2 Model Zoo](MODEL_ZOO.md).
-
-## License
-
-Detectron2 is released under the [Apache 2.0 license](LICENSE).
-
-## Citing Detectron2
-
-If you use Detectron2 in your research or wish to refer to the baseline results published in the [Model Zoo](MODEL_ZOO.md), please use the following BibTeX entry.
-
-```BibTeX
-@misc{wu2019detectron2,
-  author =       {Yuxin Wu and Alexander Kirillov and Francisco Massa and
-                  Wan-Yen Lo and Ross Girshick},
-  title =        {Detectron2},
-  howpublished = {\url{https://github.com/facebookresearch/detectron2}},
-  year =         {2019}
-}
-```
+- **캘리브레이션 평가**: 유효성 검증 데이터셋을 사용한 모델 캘리브레이션
+- **적응형 예측 세트(APS)**: 클래스 확률 기반 예측 세트 생성
+- **바운딩 박스 확장**: 캘리브레이션 기반 불확실성 영역 계산
+- **통계적 보증**: 미지의 테스트 데이터에 대한 오류율 제한
