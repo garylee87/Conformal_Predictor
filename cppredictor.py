@@ -210,7 +210,7 @@ if __name__ == "__main__":
     cfg.MODEL.DEVICE = 'cuda'
 
     # Load test image
-    test_img_path = "/home/datasets/coco/val2017/000000005193.jpg"
+    test_img_path = "/home/datasets/coco/val2017/000000000785.jpg"
     test_json_file = "/home/datasets/coco/annotations/instances_val2017.json"
     image = cv2.imread(test_img_path)
 

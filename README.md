@@ -25,7 +25,7 @@
 ](https://eccv2024.ecva.net/media/eccv-2024/Slides/139.pdf)
  - [A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty Quantification
 ](https://arxiv.org/abs/2107.07511)
-Adaptive Conformal Predictions for Time Series
+ - Adaptive Conformal Predictions for Time Series
 
 ## 라이선스
 이 프로젝트는 원본 Detectron2와 동일한 Apache 2.0 라이선스를 따릅니다.
