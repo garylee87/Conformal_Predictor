@@ -30,6 +30,6 @@
 ## 라이선스
 이 프로젝트는 원본 Detectron2와 동일한 Apache 2.0 라이선스를 따릅니다.
 
-원본 Detectron2
+## 원본 Detectron2
 이 프로젝트는 Facebook AI Research의 Detectron2를 기반으로 합니다.
 
