@@ -8,6 +8,7 @@ from detectron2.data.datasets import load_coco_json
 from detectron2.structures import BoxMode
 from detectron2.data import DatasetCatalog, MetadataCatalog
 from utilities.label_utils import coco_label_from_index
+
 import numpy as np
 from tqdm import tqdm
 import cv2
@@ -114,6 +115,7 @@ class ConformalPredictor(DefaultPredictor):
         return selected
     
     def get_max_residuals_for_classes(self, class_list):
+        '''
         max_residuals = [0.0, 0.0, 0.0, 0.0]
         for cls in class_list:
             if cls in self.classwise_qhat:
@@ -121,18 +123,31 @@ class ConformalPredictor(DefaultPredictor):
                 for j in range(4):
                     max_residuals[j] = max(max_residuals[j], q[j + 1])
         return max_residuals
+        '''
+        max_residuals = [0.0, 0.0, 0.0, 0.0]
+        for cls in class_list:
+            percentile_key = next(iter(self.classwise_qhat[cls].keys()))
+            q = self.classwise_qhat[cls][percentile_key]
+            for j in range(4):
+                max_residuals[j] = max(max_residuals[j], q[j + 1])
+        return max_residuals   
     
     def expand_box_with_residuals(self, box, residuals):
         x1_min = box[0] - residuals[0]
         y1_min = box[1] - residuals[1]
         x2_max = box[2] + residuals[2]
         y2_max = box[3] + residuals[3]
-        print(x1_min, y1_min, x2_max, y2_max)
+        print("outtebox :", x1_min, y1_min, x2_max, y2_max)
+        x1_max = box[0] + residuals[0]  
+        y1_max = box[1] + residuals[1]  
+        x2_min = box[2] - residuals[2]  
+        y2_min = box[3] - residuals[3] 
+        print("innerbox :", x1_max, y1_max, x2_min, y2_min)
         return {
-            "x1_min": x1_min.item(), "x1_max": box[0].item(),
-            "y1_min": y1_min.item(), "y1_max": box[1].item(),
-            "x2_min": box[2].item(), "x2_max": x2_max.item(),
-            "y2_min": box[3].item(), "y2_max": y2_max.item(),
+            "x1_min": x1_min.item(), "x1_max": x1_max.item(),
+            "y1_min": y1_min.item(), "y1_max": y1_max.item(),
+            "x2_min": x2_min.item(), "x2_max": x2_max.item(),
+            "y2_min": y2_min.item(), "y2_max": y2_max.item(),
         }
 
     def get_predicted_set(self, prob):
@@ -142,7 +157,14 @@ class ConformalPredictor(DefaultPredictor):
         max_residuals = self.get_max_residuals_for_classes(labels_in_set)
         return self.expand_box_with_residuals(box, max_residuals)
 
-    def conformalize(self, instances):
+    def conformalize(self, instances, calib_path=None):
+        
+        if calib_path is not None:
+            self.load_calibration(calib_path)
+
+        if not hasattr(self, 'classwise_qhat') or not hasattr(self, 'global_qhat'):
+            raise ValueError("Calibration data not loaded. Please load calibration data before conformalizing.")
+        
         pred_set = []
         conformal_regions = []
 

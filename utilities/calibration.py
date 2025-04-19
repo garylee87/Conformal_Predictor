@@ -203,7 +203,65 @@ class CalibrationRunner:
         return agg
 
 
+def generate_calibration(image_root, json_file, predictor, alpha=0.1, output_file=None, save_agg=False):
+    """
+    캘리브레이션을 수행하고 결과를 저장하는 통합 함수
+    
+    Args:
+        image_root (str): 이미지 루트 디렉토리 경로
+        json_file (str): COCO 어노테이션 JSON 파일 경로
+        predictor: 예측기 객체 (ConformalPredictor)
+        alpha (float): 오류율 (default: 0.1)
+        output_file (str): 캘리브레이션 결과 저장 파일명 (None인 경우 자동 생성)
+        save_agg (bool): 집계 결과 저장 여부 (default: False)
+        
+    Returns:
+        tuple: (classwise_qhat, global_qhat) - 생성된 캘리브레이션 결과
+    """
+    import time
+    start_time = time.time()
+    
+    # 출력 파일명 자동 생성
+    if output_file is None:
+        confidence = int((1 - alpha) * 100)
+        output_file = f"calib_q{confidence}.json"
+    
+    print(f"Loading dataset from {image_root}")
+    loader = DatasetLoader(image_root, json_file)
+    dataset = loader.load_dataset()
+    
+    print(f"Running calibration with alpha={alpha} (confidence={int((1-alpha)*100)}%)")
+    runner = CalibrationRunner(dataset, predictor)
+    results = runner.run()
+    
+    classwise_qhat = CalibrationMetrics.compute_classwise_quantiles(results, alpha=alpha)
+    global_qhat = CalibrationMetrics.compute_global_quantile(results, alpha=alpha)
+    
+    print(f"Saving calibration results to {output_file}")
+    CalibrationMetrics.save_results(classwise_qhat, global_qhat, output_file)
+    
+    # 집계 결과 저장 (옵션)
+    if save_agg:
+        # 출력 파일과 동일한 이름 패턴 사용
+        agg_file = output_file.replace(".json", "_agg.json")
+        if output_file == agg_file:  # 혹시 패턴이 일치하지 않으면
+            agg_file = f"agg_result_{int((1-alpha)*100)}.json"
+            
+        print(f"Saving aggregated results to {agg_file}")
+        with open(agg_file, "w") as f:
+            serializable_results = {}
+            for cls_id, values in results.items():
+                serializable_results[str(cls_id)] = [list(v) for v in values]
+            json.dump(serializable_results, f, indent=2)
+    
+    elapsed = time.time() - start_time
+    print(f"Calibration completed in {elapsed:.2f} seconds")
+    
+    return classwise_qhat, global_qhat
+
+
 if __name__ == "__main__":
+    # test code
     image_root = "/home/datasets/coco/val2017"
     json_file = "/home/datasets/coco/annotations/instances_val2017.json"
 
